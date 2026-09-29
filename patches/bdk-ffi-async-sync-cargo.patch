@@ -6,7 +6,7 @@ index 473d994..650f6cf 100644
  [package]
 -name = "bdk-ffi"
 +name = "bdkffi"
- version = "3.1.0"
+ version = "3.1.1"
  homepage = "https://bitcoindevkit.org"
  repository = "https://github.com/bitcoindevkit/bdk"
 @@ -21,6 +21,7 @@ bdk_electrum = { version = "0.24.0", default-features = false, features = ["use-
