@@ -6,11 +6,11 @@ labels: "release"
 assignees: ""
 ---
 
-- [ ] Create a new branch `release/X.X`
-- [ ] Bump the submodule to a release tag
-- [ ] Apply the patches
-- [ ] Run the tests
-- [ ] Build and test both example apps
+- [ ] Create a new branch `release/X.X`.
+- [ ] Bump the submodule to a release tag.
+- [ ] Apply the patches.
+- [ ] Bump the version in `package.json`, and the `bdk-rn` tarball filename in `tests/package.json` and `example/package.json` to match.
+- [ ] Build and run the tests, and build and run both example apps (below). This also regenerates `tests/pnpm-lock.yaml`, `example/pnpm-lock.yaml` and `example/ios/Podfile.lock`; commit them with the bump and merge it.
 
 ```shell
 cd bdk-ffi/
@@ -30,19 +30,15 @@ just pod-install
 just run-ios
 ```
 
-- [ ] Bump the version in `package.json` and merge it
-- [ ] Create and push the signed tag on the commit with the bumped version.
-      Pushing the tag does not publish anything
+- [ ] Create and push the signed tag on the commit with the bumped version. Pushing the tag does not publish anything.
 
 ```shell
 git tag v1.1.0 --sign --edit
 git push upstream v1.1.0
 ```
 
-- [ ] Rehearse the release: run the Release workflow from the tag without
-      `publish`. It builds everything and runs `npm publish --dry-run`
-- [ ] Publish: run the Release workflow from the tag with `publish` checked. It
-      publishes to npm and creates the GitHub release with the same tarball attached
+- [ ] Rehearse the release: run the Release workflow from the tag without `publish`. It builds everything and runs `npm publish --dry-run`.
+- [ ] Publish: run the Release workflow from the tag with `publish` checked. It publishes to npm and creates the GitHub release with the same tarball attached.
 
 ```shell
 gh workflow run release.yml --repo bitcoindevkit/bdk-rn --ref v1.1.0                        # rehearse
@@ -51,5 +47,4 @@ gh workflow run release.yml --repo bitcoindevkit/bdk-rn --ref v1.1.0 --field pub
 
 - [ ] Check the workflow succeeded and `npm view bdk-rn dist-tags` shows the new version
 - [ ] Let people know!
-
 - [ ] Bump the `next` version on `master`
