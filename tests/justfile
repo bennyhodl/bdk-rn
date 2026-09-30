@@ -14,4 +14,8 @@ clean:
 test:
   rm -rf node_modules/bdk-rn
   pnpm install --ignore-workspace
-  pnpm run android
+  # Reinstalling node_modules churns enough files that Watchman can drop events and
+  # hand Metro a stale file map ("Unable to resolve module react"). Start from fresh watches.
+  -watchman watch-del "{{justfile_directory()}}" > /dev/null 2>&1
+  -watchman watch-del "{{parent_directory(justfile_directory())}}" > /dev/null 2>&1
+  ./scripts/run-android-tests.sh
