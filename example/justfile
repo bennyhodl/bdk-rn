@@ -25,6 +25,9 @@ run-android:
 [doc("Install iOS CocoaPods dependencies.")]
 pod-install:
   cd ios && pod install
+  # React Native pins the absolute Node path in this file (e.g. Homebrew's versioned Cellar path),
+  # which breaks after a Node upgrade. Without it, ios/.xcode.env resolves node at build time.
+  rm -f ios/.xcode.env.local
 
 [doc("Run the example app on an iOS simulator.")]
 run-ios:
