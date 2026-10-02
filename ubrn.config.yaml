@@ -20,3 +20,6 @@ ios:
   targets:
     - aarch64-apple-ios
     - aarch64-apple-ios-sim
+
+wasm2:
+  ts: src/web/generated

@@ -1,8 +1,8 @@
 diff --git a/bdk-ffi/src/esplora.rs b/bdk-ffi/src/esplora.rs
-index 6311df5..1c038d5 100644
+index c04d37b..48f19e6 100644
 --- a/bdk-ffi/src/esplora.rs
 +++ b/bdk-ffi/src/esplora.rs
-@@ -48,7 +48,7 @@ impl EsploraClient {
+@@ -154,17 +154,26 @@ impl EsploraClient {
      /// (see [`FullScanRequest`]). The full scan for each keychain (`K`) stops after a gap of
      /// `stop_gap` script pubkeys with no associated transactions. `parallel_requests` specifies
      /// the maximum number of HTTP requests to make in parallel.
@@ -11,32 +11,19 @@ index 6311df5..1c038d5 100644
          &self,
          request: Arc<FullScanRequest>,
          stop_gap: u64,
-@@ -62,17 +62,24 @@ impl EsploraClient {
-             .take()
-             .ok_or(EsploraError::RequestAlreadyConsumed)?;
- 
+         parallel_requests: u64,
+     ) -> Result<Arc<Update>, EsploraError> {
+         let request = take_full_scan_request(&request)?;
 -        let result: BdkFullScanResponse<KeychainKind> =
 -            self.0
 -                .full_scan(request, stop_gap as usize, parallel_requests as usize)?;
--
--        let update = BdkUpdate {
--            last_active_indices: result.last_active_indices,
--            tx_update: result.tx_update,
--            chain: result.chain_update,
--        };
--
--        Ok(Arc::new(Update(update)))
+-        Ok(full_scan_update(result))
 +        let client = self.0.clone();
 +        crate::run_async(async move {
 +            tokio::task::spawn_blocking(move || -> Result<Arc<Update>, EsploraError> {
 +                let result: BdkFullScanResponse<KeychainKind> =
 +                    client.full_scan(request, stop_gap as usize, parallel_requests as usize)?;
-+
-+                Ok(Arc::new(Update(BdkUpdate {
-+                    last_active_indices: result.last_active_indices,
-+                    tx_update: result.tx_update,
-+                    chain: result.chain_update,
-+                })))
++                Ok(full_scan_update(result))
 +            })
 +            .await
 +            .map_err(|e| EsploraError::Parsing {
@@ -47,7 +34,7 @@ index 6311df5..1c038d5 100644
      }
  
      /// Sync a set of scripts, txids, and/or outpoints against Esplora.
-@@ -80,7 +87,7 @@ impl EsploraClient {
+@@ -172,14 +181,24 @@ impl EsploraClient {
      /// `request` provides the data required to perform a script-pubkey-based sync (see
      /// [`SyncRequest`]). `parallel_requests` specifies the maximum number of HTTP requests to make
      /// in parallel.
@@ -56,29 +43,15 @@ index 6311df5..1c038d5 100644
          &self,
          request: Arc<SyncRequest>,
          parallel_requests: u64,
-@@ -93,15 +100,23 @@ impl EsploraClient {
-             .take()
-             .ok_or(EsploraError::RequestAlreadyConsumed)?;
- 
+     ) -> Result<Arc<Update>, EsploraError> {
+         let request = take_sync_request(&request)?;
 -        let result: BdkSyncResponse = self.0.sync(request, parallel_requests as usize)?;
--
--        let update = BdkUpdate {
--            last_active_indices: BTreeMap::default(),
--            tx_update: result.tx_update,
--            chain: result.chain_update,
--        };
--
--        Ok(Arc::new(Update(update)))
+-        Ok(sync_update(result))
 +        let client = self.0.clone();
 +        crate::run_async(async move {
 +            tokio::task::spawn_blocking(move || -> Result<Arc<Update>, EsploraError> {
 +                let result: BdkSyncResponse = client.sync(request, parallel_requests as usize)?;
-+
-+                Ok(Arc::new(Update(BdkUpdate {
-+                    last_active_indices: BTreeMap::default(),
-+                    tx_update: result.tx_update,
-+                    chain: result.chain_update,
-+                })))
++                Ok(sync_update(result))
 +            })
 +            .await
 +            .map_err(|e| EsploraError::Parsing {

@@ -1,19 +1,19 @@
 diff --git a/bdk-ffi/Cargo.toml b/bdk-ffi/Cargo.toml
-index 473d994..650f6cf 100644
+index cd1a24d..87a914c 100644
 --- a/bdk-ffi/Cargo.toml
 +++ b/bdk-ffi/Cargo.toml
 @@ -1,5 +1,5 @@
  [package]
 -name = "bdk-ffi"
 +name = "bdkffi"
- version = "3.1.1"
+ version = "3.2.0-alpha.0"
  homepage = "https://bitcoindevkit.org"
  repository = "https://github.com/bitcoindevkit/bdk"
-@@ -21,6 +21,7 @@ bdk_electrum = { version = "0.24.0", default-features = false, features = ["use-
+@@ -26,6 +26,7 @@ bdk_wallet = { version = "=3.1.0", features = ["rusqlite"] }
+ bdk_esplora = { version = "0.22.2", default-features = false, features = ["std", "blocking", "blocking-https-rustls"] }
+ bdk_electrum = { version = "0.24.0", default-features = false, features = ["use-rustls-ring"] }
  bdk_kyoto = { version = "0.17.1" }
- 
- uniffi = { version = "=0.31.2", features = ["cli"]}
 +tokio = { version = "1", features = ["rt-multi-thread"] }
- thiserror = "2.0.17"
  
- [build-dependencies]
+ [target.'cfg(target_arch = "wasm32")'.dependencies]
+ bdk_esplora = { version = "0.22.2", default-features = false, features = ["std", "async-https"] }

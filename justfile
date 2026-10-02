@@ -73,12 +73,27 @@ build-tarball-ios:
   pnpm ubrn:ios --config ubrn.config.yaml
   pnpm pack
 
+# ubrn 0.31.0-5 stages the module with wasm-bindgen 0.2.100 built in, and the
+# crate must link that exact version. Nothing in bdk-ffi needs newer, so the
+# lockfile is pinned down before the build. Drop this once ubrn uses the
+# installed wasm-bindgen-cli. The same release also leaves `// @ts-nocheck` off
+# the generated index.ts, which then fails tsc inside ubrn's own types.
 [group("Build")]
-[doc("Build the release tarball with ready for both iOS and Android.")]
+[doc("Build the wasm bindings into src/web/generated. Needs the wasm32-unknown-unknown target and a clang with a wasm backend (macOS: brew install llvm).")]
+build-wasm:
+  cd ./bdk-ffi/bdk-ffi && cargo update -p wasm-bindgen --precise 0.2.100 -p js-sys -p web-sys -p wasm-bindgen-futures
+  CC_wasm32_unknown_unknown={{ env("CC_wasm32_unknown_unknown", "/opt/homebrew/opt/llvm/bin/clang") }} \
+  AR_wasm32_unknown_unknown={{ env("AR_wasm32_unknown_unknown", "/opt/homebrew/opt/llvm/bin/llvm-ar") }} \
+  pnpm ubrn:wasm --config ubrn.config.yaml
+  sed -i.bak '1s#^#// @ts-nocheck\n#' src/web/generated/index.ts && rm src/web/generated/index.ts.bak
+
+[group("Build")]
+[doc("Build the release tarball ready for iOS, Android and web.")]
 build-tarball:
   pnpm install --ignore-scripts
   pnpm ubrn:android --config ubrn.config.yaml
   pnpm ubrn:ios --config ubrn.config.yaml
+  just build-wasm
   pnpm pack
 
 [group("Docs")]

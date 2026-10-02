@@ -1,17 +1,15 @@
 diff --git a/bdk-ffi/src/lib.rs b/bdk-ffi/src/lib.rs
-index 8ee2026..b8dd51a 100644
+index db29a1a..e15d3c1 100644
 --- a/bdk-ffi/src/lib.rs
 +++ b/bdk-ffi/src/lib.rs
-@@ -17,5 +17,26 @@ mod tests;
- 
- use crate::bitcoin::FeeRate;
- use crate::bitcoin::OutPoint;
-+use std::sync::LazyLock;
+@@ -26,3 +26,25 @@ use crate::bitcoin::OutPoint;
+ extern crate uniffi_runtime_wasm as _;
  
  uniffi::setup_scaffolding!("bdk");
 +
 +/// Global Tokio runtime for async methods.
-+pub static RUNTIME: LazyLock<tokio::runtime::Runtime> = LazyLock::new(|| {
++#[cfg(not(target_arch = "wasm32"))]
++pub static RUNTIME: std::sync::LazyLock<tokio::runtime::Runtime> = std::sync::LazyLock::new(|| {
 +    tokio::runtime::Builder::new_multi_thread()
 +        .enable_all()
 +        .build()
@@ -22,6 +20,7 @@ index 8ee2026..b8dd51a 100644
 +/// uniffi polls Rust futures without a Tokio runtime context; spawning via
 +/// RUNTIME.spawn() ensures spawn_blocking and async I/O inside the future
 +/// work correctly, because the inner future runs inside the Tokio runtime.
++#[cfg(not(target_arch = "wasm32"))]
 +pub async fn run_async<F, T>(future: F) -> T
 +where
 +    F: std::future::Future<Output = T> + Send + 'static,

@@ -71,6 +71,7 @@ lib/
 ios/generated
 android/generated
 src/generated
+src/web/generated
 cpp/
 
 # React Native Nitro Modules
