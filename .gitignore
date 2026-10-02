@@ -96,3 +96,6 @@ BdkRnFramework.xcframework
 
 NOTES.md
 site/
+
+# just pack-wasm
+dist-wasm/

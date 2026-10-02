@@ -18,6 +18,7 @@ clean:
   rm -rf ./bdk-ffi/bdk-ffi/target/
   rm -rf ./BdkRnFramework.xcframework/
   rm -rf ./site/
+  rm -rf ./dist-wasm/
   rm -f ./*.tgz
 
 [group("Submodule")]
@@ -88,13 +89,22 @@ build-wasm:
   sed -i.bak '1s#^#// @ts-nocheck\n#' src/web/generated/index.ts && rm src/web/generated/index.ts.bak
 
 [group("Build")]
-[doc("Build the release tarball ready for iOS, Android and web.")]
+[doc("Build the release tarball with ready for both iOS and Android.")]
 build-tarball:
   pnpm install --ignore-scripts
   pnpm ubrn:android --config ubrn.config.yaml
   pnpm ubrn:ios --config ubrn.config.yaml
-  just build-wasm
   pnpm pack
+
+[group("Build")]
+[doc("Build the web bindings from scratch and pack them as @bennyblader/bdk-wasm (bennyblader-bdk-wasm-<version>.tgz). Publish with `npm publish bennyblader-bdk-wasm-<version>.tgz`.")]
+pack-wasm:
+  pnpm install --frozen-lockfile --ignore-scripts
+  just submodule-apply-patch
+  rustup target add wasm32-unknown-unknown
+  just build-wasm
+  pnpm prepare
+  node scripts/pack-wasm.js
 
 [group("Docs")]
 [doc("Serve the docs locally.")]

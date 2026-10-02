@@ -7,22 +7,9 @@
   "exports": {
     ".": {
       "source": "./src/index.tsx",
-      "react-native": {
-        "types": "./lib/typescript/src/index.d.ts",
-        "default": "./lib/module/index.js"
-      },
-      "browser": {
-        "types": "./lib/typescript/src/web/index.d.ts",
-        "default": "./lib/module/web/index.js"
-      },
-      "node": {
-        "types": "./lib/typescript/src/web/index.d.ts",
-        "default": "./lib/module/web/index.js"
-      },
       "types": "./lib/typescript/src/index.d.ts",
       "default": "./lib/module/index.js"
     },
-    "./bdkffi.wasm": "./lib/module/web/generated/bdkffi.wasm",
     "./package.json": "./package.json"
   },
   "files": [
@@ -34,7 +21,6 @@
     "*.podspec",
     "BdkRnFramework.xcframework",
     "react-native.config.js",
-    "!src/web/generated/*.wasm",
     "!ios/build",
     "!android/build",
     "!android/gradle",
@@ -64,9 +50,7 @@
   "keywords": [
     "react-native",
     "ios",
-    "android",
-    "web",
-    "wasm"
+    "android"
   ],
   "repository": {
     "type": "git",
@@ -92,6 +76,7 @@
     "@release-it/conventional-changelog": "^9.0.2",
     "@types/jest": "^29.5.5",
     "@types/react": "^19.0.0",
+    "@ubjs/wasm": "0.31.0-5",
     "commitlint": "^19.6.1",
     "del-cli": "^5.1.0",
     "eslint": "^9.22.0",
@@ -195,7 +180,6 @@
   },
   "dependencies": {
     "@ubjs/core": "0.31.0-5",
-    "@ubjs/wasm": "0.31.0-5",
     "uniffi-bindgen-react-native": "0.31.0-5"
   }
 }
