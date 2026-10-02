@@ -7,9 +7,22 @@
   "exports": {
     ".": {
       "source": "./src/index.tsx",
+      "react-native": {
+        "types": "./lib/typescript/src/index.d.ts",
+        "default": "./lib/module/index.js"
+      },
+      "browser": {
+        "types": "./lib/typescript/src/web/index.d.ts",
+        "default": "./lib/module/web/index.js"
+      },
+      "node": {
+        "types": "./lib/typescript/src/web/index.d.ts",
+        "default": "./lib/module/web/index.js"
+      },
       "types": "./lib/typescript/src/index.d.ts",
       "default": "./lib/module/index.js"
     },
+    "./bdkffi.wasm": "./lib/module/web/generated/bdkffi.wasm",
     "./package.json": "./package.json"
   },
   "files": [
@@ -21,6 +34,7 @@
     "*.podspec",
     "BdkRnFramework.xcframework",
     "react-native.config.js",
+    "!src/web/generated/*.wasm",
     "!ios/build",
     "!android/build",
     "!android/gradle",
@@ -35,8 +49,9 @@
   "scripts": {
     "ubrn:ios": "ubrn build ios --and-generate --profile release-smaller",
     "ubrn:android": "ubrn build android --and-generate --profile release-smaller",
+    "ubrn:wasm": "ubrn build wasm2 --profile release-smaller",
     "ubrn:checkout": "ubrn checkout",
-    "ubrn:clean": "rm -rfv cpp/ android/CMakeLists.txt android/src/main/java android/*.cpp ios/ src/Native* src/index.*ts* src/generated/",
+    "ubrn:clean": "rm -rfv cpp/ android/CMakeLists.txt android/src/main/java android/*.cpp ios/ src/Native* src/index.*ts* src/generated/ src/web/generated/",
     "test": "jest",
     "typecheck": "tsc",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
@@ -49,7 +64,9 @@
   "keywords": [
     "react-native",
     "ios",
-    "android"
+    "android",
+    "web",
+    "wasm"
   ],
   "repository": {
     "type": "git",
@@ -178,6 +195,7 @@
   },
   "dependencies": {
     "@ubjs/core": "0.31.0-5",
+    "@ubjs/wasm": "0.31.0-5",
     "uniffi-bindgen-react-native": "0.31.0-5"
   }
 }
