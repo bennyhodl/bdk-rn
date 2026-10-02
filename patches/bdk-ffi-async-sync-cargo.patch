@@ -1,12 +1,12 @@
 diff --git a/bdk-ffi/Cargo.toml b/bdk-ffi/Cargo.toml
-index cd1a24d..87a914c 100644
+index ea8b37f..ec57b00 100644
 --- a/bdk-ffi/Cargo.toml
 +++ b/bdk-ffi/Cargo.toml
 @@ -1,5 +1,5 @@
  [package]
 -name = "bdk-ffi"
 +name = "bdkffi"
- version = "3.2.0-alpha.0"
+ version = "3.1.1"
  homepage = "https://bitcoindevkit.org"
  repository = "https://github.com/bitcoindevkit/bdk"
 @@ -26,6 +26,7 @@ bdk_wallet = { version = "=3.1.0", features = ["rusqlite"] }
